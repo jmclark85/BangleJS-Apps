@@ -1,6 +1,6 @@
 var tempo = 92;
 const dt = 60000 / tempo;
-const baseOctave = 4;
+const baseOctave = 5;
 
 const frqs = [ // Pitches in PC order
   261.63, // C - 0
@@ -96,8 +96,8 @@ function playNote(pc, rhyVal, octAdj, isDotted){
 }
 
 function getFormattedNote(scoreNote){
-    let f = frq[notePC[currentNote.pitch]];
-    let t = tVals[currentNote.time];
+    let f = frqs[notePC[scoreNote.pitch]];
+    let t = tVals[scoreNote.time];
     let hasDot;
     let octAdj;
     if (scoreNote.hasOwnProperty('octave')) {
@@ -108,17 +108,18 @@ function getFormattedNote(scoreNote){
       hasDot = scoreNote.isDotted;
     } else { hasDot = false; }
     let formattedNote = [f, t, octAdj, hasDot];
+  return formattedNote;
 }
 
 function play(musicScore){
   isPlaying = true;
-  let i = 0;
-  while(isPlaying){
+  var currentNote = [];
+  for(let i = 0; i < musicScore.length; ++i){
     currentNote = getFormattedNote(musicScore[i]);
-    playNote(currentNote[0], currentNote[1], currentNote[2], currentNote[3])
-      .then(() => new Promise(resolve => setTimeout(resolve, currentNote[1])));
-    i++;
+    console.log(currentNote);
+    setTimeout(playNote(currentNote[0], currentNote[1], currentNote[2], currentNote[3]), currentNote[1]);
     if (i == musicScore.length) { isPlaying = false; }
+    if (isPlaying == false) { break; }
   }
 }
 
